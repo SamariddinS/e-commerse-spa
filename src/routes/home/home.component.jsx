@@ -1,3 +1,5 @@
+import { Outlet } from 'react-router-dom';
+
 import Categories from  '../../components/categories/categories.component'
 
 const Home = () => {
@@ -30,7 +32,12 @@ const Home = () => {
     }
   ];
 
-  return <Categories categories = {categories}/>;
+  return (
+    <div>
+      <Categories categories = {categories} />
+      <Outlet />
+    </div>
+  );
 }
 
 export default Home;
