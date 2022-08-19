@@ -1,44 +1,49 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { signInWithGooglePopup, SignInAuthUserWithEmailAndPass } from '../../utils/firebase/firebase.utils';
 import FormInput from '../form-input/form-input.component';
-import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component'
-import {SignInContainer, ButtonsContainer} from './sign-in-form.styles'
+import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
+
+import { SignInContainer, ButtonsContainer } from './sign-in-form.styles';
+import {
+  googleSignInStart,
+  emailSignInStart,
+} from '../../store/user/user.action';
 
 const defaultFormFields = {
-    email: '',
-    password: '',
+  email: '',
+  password: '',
 };
 
 const SignInForm = () => {
-    const [formFields, setFormFields] = useState(defaultFormFields);
-    const { email, password } = formFields;
+  const dispatch = useDispatch();
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { email, password } = formFields;
 
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields);
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+
+  const signInWithGoogle = async () => {
+    dispatch(googleSignInStart());
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      dispatch(emailSignInStart(email, password));
+      resetFormFields();
+    } catch (error) {
+      console.log('user sign in failed', error);
     }
+  };
 
-    const signInWithGoogle = async () => {
-        await signInWithGooglePopup();
-    }
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            await SignInAuthUserWithEmailAndPass(email, password);
-
-            resetFormFields();
-        } catch (error) {
-            console.log('user sign in failed', error);
-        }
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        setFormFields({ ...formFields, [name]: value });
-    };
+    setFormFields({ ...formFields, [name]: value });
+  };
 
     return (
         <SignInContainer>
